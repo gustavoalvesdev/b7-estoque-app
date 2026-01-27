@@ -10,6 +10,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -33,19 +35,28 @@ class UserResource extends Resource
     {
         return $schema
             ->components([
+                FileUpload::make('avatar_url')
+                    ->label('Avatar')
+                    ->columnSpanFull()
+                    ->image(),
                 TextInput::make('name')
+                    ->label('Nome')
                     ->required(),
-                Toggle::make('is_admin')
-                    ->required(),
-                TextInput::make('avatar_url')
-                    ->url(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('E-mail')
                     ->email()
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
                 TextInput::make('password')
+                    ->label('Senha')
                     ->password()
+                    ->required(),
+                Select::make('is_admin')
+                    ->label('Cargo')
+                    ->options([
+                       1 => 'Administrador',
+                       0 => 'Usuário Comum'
+                    ])
+                    ->default(0)
                     ->required(),
             ]);
     }
