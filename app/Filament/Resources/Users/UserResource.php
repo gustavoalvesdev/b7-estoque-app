@@ -37,6 +37,9 @@ class UserResource extends Resource
             ->components([
                 FileUpload::make('avatar_url')
                     ->label('Avatar')
+                    ->disk('public')
+                    ->directory('avatars')
+                    ->visibility('public')
                     ->columnSpanFull()
                     ->image(),
                 TextInput::make('name')
@@ -67,6 +70,7 @@ class UserResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 ImageColumn::make('avatar_url')
+                    ->disk('public')
                     ->label('')
                     ->default('https://www.gravatar.com/avatar/?d=mp')
                     ->width(50)
