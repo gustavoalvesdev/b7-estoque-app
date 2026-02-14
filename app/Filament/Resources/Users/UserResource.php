@@ -21,6 +21,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
@@ -77,14 +78,16 @@ class UserResource extends Resource
                     ->circular(),
                 TextColumn::make('name')
                     ->label('Nome')
+                    ->description(fn (User $record) => $record->email)
+                    ->grow(true)
                     ->searchable(),
                 IconColumn::make('is_admin')
                     ->label('Admin?')
                     ->boolean(),
 
-                TextColumn::make('email')
-                    ->label('E-mail')
-                    ->searchable(),
+                // TextColumn::make('email')
+                //     ->label('E-mail')
+                //     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -98,8 +101,10 @@ class UserResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()
+                ->hidden(!Auth::user()->is_admin),
+                DeleteAction::make()
+                ->hidden(fn (User $userRecord) => $userRecord->id === Auth::user()->id || !Auth::user()->is_admin),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
