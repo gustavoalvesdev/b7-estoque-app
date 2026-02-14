@@ -22,6 +22,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends Resource
 {
@@ -39,10 +40,15 @@ class UserResource extends Resource
                 FileUpload::make('avatar_url')
                     ->label('Avatar')
                     ->disk('public')
+                    ->deleteUploadedFileUsing(function ($file) {
+                        Storage::disk('public')->delete($file);
+                    })
                     ->directory('avatars')
                     ->visibility('public')
                     ->columnSpanFull()
-                    ->image(),
+                    ->image()
+                    ->acceptedFileTypes(['image/jpeg','image/png', 'image/webp'])
+                    ->maxSize(2048), // KB
                 TextInput::make('name')
                     ->label('Nome')
                     ->required(),
